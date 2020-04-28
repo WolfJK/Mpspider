@@ -6,7 +6,15 @@ from scrapy.loader import ItemLoader as il
 from scrapy.spiders import CrawlSpider  # 该类支持只爬取 start_urls 列表中 url
 import logging
 
+
+logging.basicConfig(level=logging.INFO,
+                    format='levelname:%(levelname)s filename: %(filename)s '
+                           'outputNumber: [%(lineno)d]  thread: %(threadName)s output msg:  %(message)s'
+                           ' - %(asctime)s', datefmt='[%d/%b/%Y %H:%M:%S]',
+                    # filename='./loggmsg.log'
+                    )
 logger = logging.getLogger(__name__)
+
 
 class SaspiderSpider(CrawlSpider):  # scrapy.spiders
     name = 'sa_spider'

@@ -68,7 +68,7 @@ DEFAULT_REQUEST_HEADERS = {
 ITEM_PIPELINES = {
     'MpSpider.pipelines.MpspiderPipeline': 300,
     'MpSpider.pipelines.DogPipeline': 400,
-    'scrapy_redis.scheduler.Scheduler': 500
+    # 'scrapy_redis.scheduler.Scheduler': 500
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -92,13 +92,23 @@ ITEM_PIPELINES = {
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
+# 数据库配置
+MYSQL_SETTINGS = dict(
+    host='127.0.0.1',
+    port=3306,
+    password='Test1234',
+    database='test'
+)
 
+
+'''
 # SCHEDULER_PERSIST = True  # 是否允许停止
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"  # 共享调度器
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"  # 去重
-REDIS_URL = 'redis:127.0.0.1:6379'
+REDIS_URL = 'redis:172.16.1.134:6379'
 REDIS_START_URLS_AS_SET=False  # 默认是false，列表的格式取数据出来
 # REDIS_START_URLS_KEY='http://lingdang.goumin.com/v2/thread-index'
-# REDIS_PARAMS = {
-# 'password' : 'longqi'
-# }
+REDIS_PARAMS = {
+    'password' : 'admin'
+}
+'''
