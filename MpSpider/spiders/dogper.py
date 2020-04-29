@@ -32,20 +32,31 @@ class DogSpider(CrawlSpider):  # scrapy.spiders
     #  提供账号生成的 token
     temp = 'Hm_lvt_8d0447bcda7403d6e941367e44cbeea8=1576060198; _ga=GA1.2.473392251.1576060199; wyq_jcrb_wyq_jcrb_=8276; oldPath=/; JSESSIONID=556950d3-7afe-4992-9ceb-a8b5a5a81079'
     seqnum = 'GMPCBBS1555577562755000'
-    datas = {"uid": '0', "token": 'j6fv473ug7sh2bvep6vjywibnmhcog7vccf6a8rg47mu85yp2myq65rhhwjt0ig3',
-            "seqnum": seqnum, "data": ''}
+    token = 'j6fv473ug7sh2bvep6vjywibnmhcog7vccf6a8rg47mu85yp2myq65rhhwjt0ig3'
     logger.info(settings.DEFAULT_REQUEST_HEADERS)
     PageNums = 1 #  页数
+    send_data = {"uid": '0', "token": token, "seqnum": seqnum, "data": {"count": '20', "page": '1'}}
+
 
     def start_requests(self):
         logger.info('--start_requests()---')
-        logger.info(json.dumps(self.datas))
+        logger.warning(json.dumps(self.send_data))
         for i in range(1, self.PageNums + 1):
-            item = dict()
-            t = deepcopy(self.datas)
-            t['data'] = {"count": '2', "page": str(i)}
-            yield scrapy.Request(url=self.start_urls[0],  callback=self.parse, body=json.dumps(t), meta=dict(item=item), method='POST')
-            # yield self.make_requests_from_url(url)
+            self.send_data['data']['page'] = str(i)
+            logger.info(self.start_urls)
+            print('--->', self.send_data, '<------')
+            yield scrapy.Request(url=self.start_urls[0], body=json.dumps(self.send_data), callback=self.parse, method='POST', dont_filter=True)
+            # yield scrapy.FormRequest(url=self.start_urls[0], formdata=self.data, callback=self.parse, method='POST', dont_filter=True)
+    '''
+    def make_request_from_data(self, data):
+        # 重写 RedixMixin 中方法,发送post请求
+        # data : {'url': '', 'formdata': {"uid": '0', "token": '0', "seqnum": ', "data": {"count": '20', "page": '1'}}}
+        logger.info(type(data))
+        url = json.loads(data).get('url')
+        # formdata = json.loads(data).get('url')
+        print('--->', url, '<------')
+        return scrapy.FormRequest(url=url, formdata=self.send_data, callback=self.parse)
+    '''
 
 
     def parse(self, response):
@@ -71,9 +82,9 @@ class DogSpider(CrawlSpider):  # scrapy.spiders
                     temp.update({'louzhu': '1'})
                 if item['acticle_id']:
                     temp['id'] = str(item['acticle_id'])
-                t = deepcopy(self.datas)
+                t = deepcopy(self.send_data)
                 t['data'] = temp
-                logger.info(self.datas)
+                logger.info(self.send_data)
                 # yield item
                 yield scrapy.Request(url=url,  callback=self.parseArticleInfo, body=json.dumps(t),
                                      meta=dict(item=deepcopy(item)), method='POST')
@@ -106,7 +117,7 @@ class DogSpider(CrawlSpider):  # scrapy.spiders
             # 继续抓取用户信息  http://club.goumin.com/personal/index.html?uid=1254570
             uer_url = 'http://lingdang.goumin.com/v2/userinfo'
             logger.info('--==============================()---')
-            t = deepcopy(self.datas)
+            t = deepcopy(self.send_data)
             t['data'] = {"userid": str(item['louzhuid'])}
             yield scrapy.Request(uer_url, body=json.dumps(t), method='POST', meta={'item': deepcopy(item)}, callback=self.parseUserInfo)
             # yield scrapy.FormRequest(uer_url, formdata=t, method='POST', meta={'item': deepcopy(item)}, callback=self.parseUserInfo)
@@ -142,7 +153,7 @@ class DogSpider(CrawlSpider):  # scrapy.spiders
             item['infos']['name'] = response_data['data']['nickname']
 
             achive = 'http://lingdang.goumin.com/v4/user/user-achievement'
-            t = deepcopy(self.datas)
+            t = deepcopy(self.send_data)
             t['data'] = {"uid": str(item['louzhuid'])}
             t['uid'] = str(item['louzhuid'])
             yield scrapy.Request(url=achive,  callback=self.parseAchaive, body=json.dumps(t),

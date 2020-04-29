@@ -102,13 +102,15 @@ MYSQL_SETTINGS = dict(
 
 
 '''
-# SCHEDULER_PERSIST = True  # 是否允许停止
+SCHEDULER_PERSIST = True  # 是否允许停止
 SCHEDULER = "scrapy_redis.scheduler.Scheduler"  # 共享调度器
 DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"  # 去重
-REDIS_URL = 'redis:172.16.1.134:6379'
+# REDIS_URL = 'redis:127.0.0.1:6379'
 REDIS_START_URLS_AS_SET=False  # 默认是false，列表的格式取数据出来
 # REDIS_START_URLS_KEY='http://lingdang.goumin.com/v2/thread-index'
 REDIS_PARAMS = {
-    'password' : 'admin'
+    'password': 'admin',
+    'host': '127.0.0.1',
+    'port': 6379
 }
 '''
